@@ -1,1 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thermal Energy Live Quiz | Grade 11</title>
+<style>
+:root{--navy:#132a55;--blue:#2864dc;--sky:#eaf2ff;--ink:#18243a;--muted:#64748b;--line:#dce5f3;--green:#18845b;--red:#bd3448;--purple:#7653d6}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fc;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{background:linear-gradient(120deg,#17346b,#2864dc);color:#fff;padding:26px 18px}header .inner{max-width:1100px;margin:auto}h1{margin:0;font-size:clamp(1.65rem,4vw,2.5rem);letter-spacing:-.04em}header p{margin:8px 0 0;color:#dce8ff}
+main{max-width:1100px;margin:24px auto;padding:0 16px 44px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 28px #183a7110;margin-bottom:16px}
+h2{margin:0 0 8px;font-size:1.3rem}p{line-height:1.5}.muted{color:var(--muted)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+button,.tab{border:0;border-radius:11px;padding:12px 16px;font-weight:750;font-size:.96rem;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#eaf0ff;color:#244ba7}.dark{background:#172b50;color:white}.danger{background:#fff0f1;color:#a31f36}.tab{background:#e8edf7;color:#43536e}.tab.active{background:#172f65;color:#fff}
+input{width:100%;border:1px solid #ccd7e8;border-radius:10px;padding:13px 12px;font-size:1rem;margin:6px 0 13px;background:#fff;color:var(--ink)}label{font-weight:700;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.hidden{display:none!important}.pin{font-size:2.3rem;letter-spacing:.18em;font-weight:900;color:#214ec0}.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:#edf3ff;color:#254ca0;border-radius:999px;font-size:.8rem;font-weight:800}.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.stat{background:#f5f8ff;border-radius:12px;padding:14px}.stat strong{display:block;font-size:1.5rem}.list{display:grid;gap:8px}.player{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px}.avatar{background:#e6edff;color:#224cb5;border-radius:10px;padding:8px;text-align:center;font-weight:900}.small{font-size:.84rem}.question{font-size:clamp(1.25rem,3vw,1.8rem);line-height:1.3;font-weight:850;margin:16px 0 20px}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.option{background:#f5f7fc;border:2px solid #e1e7f1;text-align:left;min-height:70px;color:#18243a}.option:hover{border-color:#8aa9f5}.option.selected{border-color:var(--blue);background:#eaf1ff}.option.correct{border-color:#21a675;background:#e6f8f0}.option.wrong{border-color:#db596a;background:#fff0f2}.bar{height:9px;background:#e8edf6;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:#2864dc;width:0;transition:width .2s}.notice{padding:12px;border-radius:10px;background:#fff7e6;color:#80530b}.success{padding:12px;border-radius:10px;background:#e8f8f0;color:#116b49}.error{color:#b42336;margin:8px 0}.foot{font-size:.82rem;color:#73819a;text-align:center;padding:12px}
+@media(max-width:700px){.grid,.options{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:17px}.pin{font-size:1.8rem}}
+</style>
+</head>
+<body>
+<header><div class="inner"><h1>Transferring Thermal Energy</h1><p>Grade 11 Physics · Live classroom quiz</p></div></header>
+<main>
+<div class="tabs"><button class="tab active" id="studentTab">Student join</button><button class="tab" id="teacherTab">Teacher dashboard</button></div>
+<div id="status" class="muted small" style="margin:0 0 14px">Connecting to live quiz server…</div>
+
+<section id="studentJoin" class="card">
+<h2>Join your class</h2><p class="muted">Ask your teacher for the six-digit game PIN, then enter your details.</p>
+<form id="joinForm">
+<label for="pinInput">Game PIN</label><input id="pinInput" inputmode="numeric" maxlength="6" placeholder="e.g. 482193" required>
+<div class="grid"><div><label for="nameInput">Your name</label><input id="nameInput" maxlength="40" placeholder="First and last name" required></div><div><label for="classInput">Class</label><input id="classInput" maxlength="30" placeholder="e.g. Grade 11A" required></div></div>
+<button class="primary" type="submit">Join quiz</button><div id="joinError" class="error"></div>
+</form>
+</section>
+
+<section id="studentPlay" class="hidden">
+<div class="card"><div class="row between"><div><span class="pill" id="studentBadge">STUDENT</span><h2 id="welcome" style="margin-top:10px">Welcome</h2></div><div class="muted small" id="studentScore">Score: 0</div></div>
+<div id="studentProgress" class="bar"><span></span></div><p class="muted small" id="studentState">Waiting for your teacher to start…</p></div>
+<div class="card hidden" id="studentQuestion"><div class="row between"><span class="pill" id="questionNumber">QUESTION 1</span><span class="muted small" id="questionType">MULTIPLE CHOICE</span></div><div class="question" id="questionText"></div><div class="options" id="studentOptions"></div><div id="answerMessage" style="margin-top:14px"></div></div>
+<div class="card hidden" id="studentResults"><h2>Answer revealed</h2><p id="studentFeedback"></p><p id="studentCorrect"></p><button class="secondary" id="backWaiting">Continue</button></div>
+<div class="card hidden" id="studentFinished"><h2>Quiz complete!</h2><p id="finalScore"></p><p class="muted">Your teacher can show the final class leaderboard.</p></div>
+</section>
+
+<section id="teacherStart" class="card hidden">
+<h2>Teacher dashboard</h2><p class="muted">Create a room, share the PIN with your students, then control the questions from this dashboard.</p>
+<button class="primary" id="createRoom">Create live quiz room</button><div id="teacherError" class="error"></div>
+</section>
+
+<section id="teacherPanel" class="hidden">
+<div class="card"><div class="row between"><div><span class="pill">TEACHER HOST</span><h2 style="margin-top:10px">Your game PIN</h2><div class="pin" id="roomPin">------</div><p class="muted small">Students open this website and enter the PIN, name, and class.</p></div><button class="secondary" id="copyPin">Copy PIN</button></div><div class="statgrid"><div class="stat"><span class="muted small">Joined</span><strong id="joinedCount">0</strong></div><div class="stat"><span class="muted small">Answered</span><strong id="answeredCount">0</strong></div><div class="stat"><span class="muted small">Question</span><strong id="currentCount">—</strong></div></div></div>
+<div class="grid">
+<div class="card"><div class="row between"><h2>Live question</h2><span class="pill" id="hostState">LOBBY</span></div><div id="hostQuestionEmpty"><p class="muted">Waiting room is open. Start when students have joined.</p><button class="primary" id="startQuiz">Start quiz</button></div><div id="hostQuestionBox" class="hidden"><div class="bar"><span id="hostProgressBar"></span></div><p class="small muted" id="hostQuestionNumber"></p><div class="question" id="hostQuestionText"></div><div class="list" id="hostOptions"></div><div class="row" style="margin-top:16px"><button class="primary" id="revealAnswers">Reveal answers & score</button><button class="secondary hidden" id="nextQuestion">Next question</button></div><p class="muted small" id="hostExplanation"></p></div><div id="hostFinished" class="hidden"><h2>Quiz finished</h2><p>All questions have been completed. Review the final scores on the leaderboard.</p></div></div>
+<div class="card"><div class="row between"><h2>Students</h2><span class="pill">LIVE</span></div><div id="studentRoster" class="list"><p class="muted">No students have joined yet.</p></div></div>
+</div>
+<div class="card"><div class="row between"><h2>Leaderboard</h2><span class="muted small">1000 points per correct answer</span></div><div id="leaderboard" class="list"><p class="muted">Scores appear here when students answer.</p></div></div>
+</section>
+<div class="foot">Grade 11 Physics · Transferring Thermal Energy · Classroom quiz</div>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const $ = id => document.getElementById(id);
+let role = null, pin = null, latest = null, studentId = null, selected = null;
+const setStatus = s => $("status").textContent = s;
+function showTab(which) {
+  $("studentTab").classList.toggle("active", which==="student");
+  $("teacherTab").classList.toggle("active", which==="teacher");
+  if (which==="student") {
+    $("studentJoin").classList.toggle("hidden", !!studentId);
+    $("studentPlay").classList.toggle("hidden", !studentId);
+    $("teacherStart").classList.add("hidden"); $("teacherPanel").classList.add("hidden");
+  } else {
+    $("studentJoin").classList.add("hidden"); $("studentPlay").classList.add("hidden");
+    $("teacherStart").classList.toggle("hidden", !pin || role!=="teacher");
+    $("teacherPanel").classList.toggle("hidden", !pin || role!=="teacher");
+  }
+}
+$("studentTab").onclick=()=>showTab("student");
+$("teacherTab").onclick=()=>showTab("teacher");
+socket.on("connect",()=>setStatus("Connected to live quiz server."));
+socket.on("disconnect",()=>setStatus("Connection lost. Reconnecting…"));
+$("joinForm").addEventListener("submit", e=>{
+  e.preventDefault(); $("joinError").textContent="";
+  const data={pin:$("pinInput").value.trim(),name:$("nameInput").value.trim(),className:$("classInput").value.trim()};
+  socket.emit("student:join",data,res=>{
+    if(!res?.ok){$("joinError").textContent=res?.error||"Could not join.";return;}
+    role="student";pin=data.pin;studentId=socket.id;
+    $("welcome").textContent=`Welcome, ${res.name}`;
+    $("studentBadge").textContent=res.className.toUpperCase();
+    showTab("student"); setStatus(`Joined game ${pin}.`);
+  });
+});
+$("createRoom").onclick=()=>{
+  $("teacherError").textContent="";
+  socket.emit("teacher:create",{},res=>{
+    if(!res?.ok){$("teacherError").textContent="Could not create a room. Try again.";return;}
+    role="teacher";pin=res.pin;showTab("teacher");renderRoom({pin,state:"lobby",questionIndex:-1,questionCount:res.questions,players:[],answeredCount:0});
+    setStatus("Teacher room created. Share the PIN with your students.");
+  });
+};
+function teacherAction(action){socket.emit("teacher:action",{pin,action},res=>{if(!res?.ok)$("teacherError").textContent=res?.error||"Action failed.";});}
+$("startQuiz").onclick=()=>teacherAction("start");
+$("revealAnswers").onclick=()=>teacherAction("reveal");
+$("nextQuestion").onclick=()=>teacherAction("next");
+$("copyPin").onclick=async()=>{try{await navigator.clipboard.writeText(pin);$("copyPin").textContent="Copied!";setTimeout(()=>$("copyPin").textContent="Copy PIN",1200);}catch(e){$("copyPin").textContent="PIN: "+pin;}};
+$("backWaiting").onclick=()=>{$("studentResults").classList.add("hidden");$("studentQuestion").classList.add("hidden");$("studentState").textContent="Waiting for the next question…";};
+socket.on("room:update", room=>{latest=room;if(role==="teacher"&&room.pin===pin)renderRoom(room);if(role==="student"&&room.pin===pin)renderStudent(room);});
+function renderRoom(r){
+  $("roomPin").textContent=r.pin||pin||"------";
+  const players=r.players||[];
+  $("joinedCount").textContent=players.length;
+  $("answeredCount").textContent=r.answeredCount||0;
+  $("currentCount").textContent=r.question?`${r.question.number}/${r.question.total}`:"—";
+  $("hostState").textContent=(r.state||"lobby").toUpperCase();
+  $("hostQuestionEmpty").classList.toggle("hidden",r.state!=="lobby");
+  $("hostQuestionBox").classList.toggle("hidden",!["question","results"].includes(r.state));
+  $("hostFinished").classList.toggle("hidden",r.state!=="finished");
+  if(r.question){
+    $("hostQuestionNumber").textContent=`Question ${r.question.number} of ${r.question.total}`;
+    $("hostQuestionText").textContent=r.question.question;
+    $("hostProgressBar").style.width=`${100*r.question.number/r.question.total}%`;
+    $("hostOptions").innerHTML="";
+    r.question.options.forEach((opt,i)=>{
+      const div=document.createElement("div");div.className="player";
+      let count=r.answerStats?.[i];
+      div.innerHTML=`<div class="avatar">${String.fromCharCode(65+i)}</div><div>${escapeHtml(opt)}</div><strong>${count===undefined?"":count+" votes"}</strong>`;
+      if(r.state==="results"&&i===r.correctAnswer)div.style.borderColor="#21a675";
+      $("hostOptions").appendChild(div);
+    });
+    $("revealAnswers").classList.toggle("hidden",r.state!=="question");
+    $("nextQuestion").classList.toggle("hidden",r.state!=="results");
+    $("hostExplanation").textContent=r.state==="results"?`Correct answer: ${r.question.options[r.correctAnswer]}. ${r.explanation||""}`:"";
+  }
+  $("studentRoster").innerHTML=players.length?"":"<p class='muted'>No students have joined yet.</p>";
+  players.forEach((p,i)=>{
+    const div=document.createElement("div");div.className="player";
+    div.innerHTML=`<div class="avatar">${i+1}</div><div><strong>${escapeHtml(p.name)}</strong><div class="muted small">${escapeHtml(p.className)} · ${p.connected?"Online":"Disconnected"}</div></div><span class="pill">${p.answered?"Answered":"Thinking"}</span>`;
+    $("studentRoster").appendChild(div);
+  });
+  const sorted=[...players].sort((a,b)=>b.score-a.score);
+  $("leaderboard").innerHTML=sorted.length?"":"<p class='muted'>Scores appear here when students answer.</p>";
+  sorted.forEach((p,i)=>{
+    const div=document.createElement("div");div.className="player";
+    div.innerHTML=`<div class="avatar">${i+1}</div><div><strong>${escapeHtml(p.name)}</strong><div class="muted small">${escapeHtml(p.className)}</div></div><strong>${p.score} pts</strong>`;
+    $("leaderboard").appendChild(div);
+  });
+}
+function renderStudent(r){
+  $("studentScore").textContent="Score: "+((r.players||[]).find(p=>p.id===socket.id)?.score||0);
+  $("studentQuestion").classList.toggle("hidden",!["question","results"].includes(r.state));
+  $("studentResults").classList.toggle("hidden",r.state!=="results");
+  $("studentFinished").classList.toggle("hidden",r.state!=="finished");
+  $("studentState").textContent=r.state==="lobby"?"You’re in! Wait for your teacher to start.":r.state==="question"?"Choose your answer. You can submit only once per question.":r.state==="results"?"Your answer has been checked. Wait for the next question.":"The quiz has ended.";
+  if(r.question){
+    $("questionNumber").textContent=`QUESTION ${r.question.number} / ${r.question.total}`;
+    $("questionType").textContent=r.question.type==="tf"?"TRUE OR FALSE":"MULTIPLE CHOICE";
+    $("questionText").textContent=r.question.question;
+    $("studentProgress").firstElementChild.style.width=`${100*r.question.number/r.question.total}%`;
+    const me=(r.players||[]).find(p=>p.id===socket.id);
+    const answered=!!me?.answered || r.state==="results";
+    $("studentOptions").innerHTML="";
+    r.question.options.forEach((opt,i)=>{
+      const b=document.createElement("button");b.className="option";b.textContent=opt;
+      if(selected===i)b.classList.add("selected");
+      if(r.state==="results"&&i===r.correctAnswer)b.classList.add("correct");
+      if(r.state==="results"&&selected===i&&i!==r.correctAnswer)b.classList.add("wrong");
+      b.disabled=answered||r.state!=="question";
+      b.onclick=()=>{
+        selected=i;
+        socket.emit("student:answer",{pin,choice:i},res=>{
+          if(!res?.ok){$("answerMessage").textContent=res?.error||"Could not submit answer.";return;}
+          $("answerMessage").innerHTML="<div class='success'>Answer submitted! Waiting for your teacher to reveal the result.</div>";
+          renderStudent(latest);
+        });
+        renderStudent(latest);
+      };
+      $("studentOptions").appendChild(b);
+    });
+    if(r.state==="question"&&answered)$("answerMessage").innerHTML="<div class='success'>Answer locked in. Waiting for results…</div>";
+    else if(r.state==="question")$("answerMessage").textContent="";
+    if(r.state==="results"){
+      $("studentFeedback").textContent=(selected===r.correctAnswer)?"You earned 1,000 points for this question!":"This answer was not correct.";
+      $("studentCorrect").textContent=`Correct answer: ${r.question.options[r.correctAnswer]}. ${r.explanation||""}`;
+    }
+  }
+  if(r.state==="finished"){
+    const me=(r.players||[]).find(p=>p.id===socket.id);
+    $("finalScore").textContent=`Final score: ${me?.score||0} points.`;
+  }
+  if(r.state==="question"&&(!latest||latest.questionIndex!==r.questionIndex))selected=null;
+}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+</script>
+</body></html>
 
