@@ -59,19 +59,32 @@ const socket = io();
 const $ = id => document.getElementById(id);
 let role = null, pin = null, latest = null, studentId = null, selected = null;
 const setStatus = s => $("status").textContent = s;
+
 function showTab(which) {
-  $("studentTab").classList.toggle("active", which==="student");
-  $("teacherTab").classList.toggle("active", which==="teacher");
-  if (which==="student") {
+  $("studentTab").classList.toggle("active", which === "student");
+  $("teacherTab").classList.toggle("active", which === "teacher");
+
+  if (which === "student") {
     $("studentJoin").classList.toggle("hidden", !!studentId);
     $("studentPlay").classList.toggle("hidden", !studentId);
-    $("teacherStart").classList.add("hidden"); $("teacherPanel").classList.add("hidden");
+    $("teacherStart").classList.add("hidden");
+    $("teacherPanel").classList.add("hidden");
   } else {
-    $("studentJoin").classList.add("hidden"); $("studentPlay").classList.add("hidden");
-    $("teacherStart").classList.toggle("hidden", !pin || role!=="teacher");
-    $("teacherPanel").classList.toggle("hidden", !pin || role!=="teacher");
+    $("studentJoin").classList.add("hidden");
+    $("studentPlay").classList.add("hidden");
+
+    $("teacherStart").classList.toggle(
+      "hidden",
+      !!(pin && role === "teacher")
+    );
+
+    $("teacherPanel").classList.toggle(
+      "hidden",
+      !(pin && role === "teacher")
+    );
   }
 }
+
 $("studentTab").onclick=()=>showTab("student");
 $("teacherTab").onclick=()=>showTab("teacher");
 socket.on("connect",()=>setStatus("Connected to live quiz server."));
@@ -189,4 +202,3 @@ function renderStudent(r){
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 </script>
 </body></html>
-
