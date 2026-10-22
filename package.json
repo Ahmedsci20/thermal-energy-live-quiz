@@ -1,0 +1,17 @@
+{
+  "name": "thermal-energy-live-classroom-quiz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A real-time Grade 11 thermal energy classroom quiz with teacher dashboard and student join PIN.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
