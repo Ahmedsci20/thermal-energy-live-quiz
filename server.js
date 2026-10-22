@@ -40,7 +40,7 @@ function roomSnapshot(room) {
   return {
     pin: room.pin, state: room.state, questionIndex: room.questionIndex,
     questionCount: questions.length,
-    question: room.state === "question" ? publicQuestion(room.questionIndex) : null,
+   question: ["question", "results"].includes(room.state) ? publicQuestion(room.questionIndex) : null,
     players: [...room.players.values()].map(p => ({
       id:p.id, name:p.name, className:p.className, score:p.score,
       answered:p.answer !== null, connected:p.connected
